@@ -3,6 +3,7 @@
 //  NotchDrop
 //
 //  Created by 秋星桥 on 2024/7/11.
+//  Edited by Lane Shukhov on 2024/10/21.
 //
 
 import ColorfulX
@@ -15,13 +16,11 @@ struct NotchMenuView: View {
     var body: some View {
         HStack(spacing: vm.spacing) {
             close
-            github
-            donate
             settings
-            clear
+            github
         }
     }
-
+    
     var github: some View {
         ColorButton(
             color: ColorfulPreset.colorful.colors,
@@ -30,19 +29,6 @@ struct NotchMenuView: View {
         )
         .onTapGesture {
             NSWorkspace.shared.open(productPage)
-            vm.notchClose()
-        }
-        .clipShape(RoundedRectangle(cornerRadius: vm.cornerRadius))
-    }
-
-    var donate: some View {
-        ColorButton(
-            color: ColorfulPreset.colorful.colors,
-            image: Image(systemName: "heart.fill"),
-            title: "Love Drop"
-        )
-        .onTapGesture {
-            NSWorkspace.shared.open(sponsorPage)
             vm.notchClose()
         }
         .clipShape(RoundedRectangle(cornerRadius: vm.cornerRadius))
@@ -59,19 +45,6 @@ struct NotchMenuView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 NSApp.terminate(nil)
             }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: vm.cornerRadius))
-    }
-
-    var clear: some View {
-        ColorButton(
-            color: [.red],
-            image: Image(systemName: "trash"),
-            title: "Clear"
-        )
-        .onTapGesture {
-            tvm.removeAll()
-            vm.notchClose()
         }
         .clipShape(RoundedRectangle(cornerRadius: vm.cornerRadius))
     }

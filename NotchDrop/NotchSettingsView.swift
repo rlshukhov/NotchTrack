@@ -3,6 +3,7 @@
 //  NotchDrop
 //
 //  Created by 曹丁杰 on 2024/7/29.
+//  Edited by Lane Shukhov on 2024/10/21.
 //
 
 import LaunchAtLogin
@@ -21,7 +22,7 @@ struct NotchSettingsView: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-                .frame(width: vm.selectedLanguage == .simplifiedChinese || vm.selectedLanguage == .traditionalChinese ? 220 : 160)
+                .frame(width: 160)
 
                 Spacer()
                 LaunchAtLogin.Toggle {
@@ -35,27 +36,21 @@ struct NotchSettingsView: View {
             }
 
             HStack {
-                Text("File Storage Time: ")
-                Picker(String(), selection: $tvm.selectedFileStorageTime) {
-                    ForEach(TrayDrop.FileStorageTime.allCases) { time in
-                        Text(time.localized).tag(time)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-                .frame(width: 100)
-                if tvm.selectedFileStorageTime == .custom {
-                    TextField("Days", value: $tvm.customStorageTime, formatter: NumberFormatter())
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: 50)
-                        .padding(.leading, 10)
-                    Picker("Time Unit", selection: $tvm.customStorageTimeUnit) {
-                        ForEach(TrayDrop.CustomstorageTimeUnit.allCases) { unit in
-                            Text(unit.localized).tag(unit)
+                Text("Logs folder: ")
+                TextField("Choose folder", text: .constant(tvm.logDirectory))
+                    .disabled(true)
+                    .textFieldStyle(.plain)
+                Button("Choose") {
+                    let panel = NSOpenPanel()
+                    panel.canChooseDirectories = true
+                    panel.canChooseFiles = false
+                    if panel.runModal() == .OK {
+                        if let url = panel.url {
+                            tvm.setLogDirectory(url)
                         }
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .frame(width: 200)
                 }
+                
                 Spacer()
             }
         }

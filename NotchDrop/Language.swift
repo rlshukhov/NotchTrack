@@ -3,6 +3,7 @@
 //  NotchDrop
 //
 //  Created by 秋星桥 on 2024/7/31.
+//  Edited by Lane Shukhov on 2024/10/21.
 //
 
 import Cocoa
@@ -10,11 +11,7 @@ import Cocoa
 enum Language: String, CaseIterable, Identifiable, Codable {
     case system = "Follow System"
     case english = "English"
-    case german = "German"
-    case simplifiedChinese = "Simplified Chinese"
-    case traditionalChinese = "Traditional Chinese"
-    case japanese = "Japanese"
-    case french = "French"
+    case russian = "Russian"
 
     var id: String { rawValue }
 
@@ -29,29 +26,15 @@ enum Language: String, CaseIterable, Identifiable, Codable {
 
         switch self {
         case .system:
-            if region == "rg=hkzzzz" || region == "rg=twzzzz" || region == "rg=mozzzz"
-                || region == "TW" || region == "HK" || region == "MO"
-            {
-                languageCode = "zh-Hant"
-            } else if region == "CN" {
-                languageCode = "zh-Hans"
-            } else if region == "FR" {
-                languageCode = "fr"
+            if region == "RU" {
+                languageCode = "ru"
             } else {
                 languageCode = "en"
             }
         case .english:
             languageCode = "en"
-        case .german:
-            languageCode = "de"
-        case .simplifiedChinese:
-            languageCode = "zh-Hans"
-        case .traditionalChinese:
-            languageCode = "zh-Hant"
-        case .japanese:
-            languageCode = "ja"
-        case .french:
-            languageCode = "fr"
+        case .russian:
+            languageCode = "ru"
         }
 
         Bundle.setLanguage(languageCode)
@@ -73,18 +56,6 @@ private func relaunchApp() {
     task.launch()
     exit(0)
 }
-
-// private func restartApp() {
-//     guard let appPath = Bundle.main.executablePath else { return }
-//     NSApp.terminate(nil)
-
-//     DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-//         let process = Process()
-//         process.executableURL = URL(fileURLWithPath: appPath)
-//         try? process.run()
-//         exit(0)
-//     }
-// }
 
 private extension Bundle {
     private static var onLanguageDispatchOnce: () -> Void = {

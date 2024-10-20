@@ -1,5 +1,5 @@
 {
-  "originHash" : "f0d4037b316e691fefb0ff41167e80ee122ba1766331e69b36ecf83a7408b0fc",
+  "originHash" : "bc8208a55c9ce0d811c5a6e20211d8d5188640dc0087ad327d98df5466a14879",
   "pins" : [
     {
       "identity" : "colorfulx",
@@ -53,6 +53,15 @@
       "state" : {
         "revision" : "3d2dc41a01f9e49d84f0a3925fb858bed64f702d",
         "version" : "1.1.2"
+      }
+    },
+    {
+      "identity" : "yamlswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/behrang/YamlSwift.git",
+      "state" : {
+        "revision" : "287f5cab7da0d92eb947b5fd8151b203ae04a9a3",
+        "version" : "3.4.4"
       }
     }
   ],

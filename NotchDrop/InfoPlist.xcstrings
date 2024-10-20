@@ -7,31 +7,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "NotchDrop"
+            "value" : "NotchTrack"
           }
         },
-        "fr" : {
+        "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "NotchDrop"
+            "value" : "NotchTrack"
           }
         },
-        "ja" : {
+        "ru-RU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notch Drop"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "简放岛"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "簡放島"
+            "value" : "NotchTrack"
           }
         }
       }
@@ -43,31 +31,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "NotchDrop"
+            "value" : "NotchTrack"
           }
         },
-        "fr" : {
+        "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "NotchDrop"
+            "state" : "needs_review",
+            "value" : "NotchTrack"
           }
         },
-        "ja" : {
+        "ru-RU" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notch Drop"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "简放岛"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "簡放島"
+            "state" : "needs_review",
+            "value" : "NotchTrack"
           }
         }
       }
@@ -79,31 +55,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Copyright © 2024 Lakr Aream. All rights reserved."
+            "value" : "Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All rights reserved."
           }
         },
-        "fr" : {
+        "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copyright © 2024 Lakr Aream. All rights reserved."
+            "value" : "Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All rights reserved."
           }
         },
-        "ja" : {
+        "ru-RU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copyright © 2024 Lakr Aream. All rights reserved."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "© 2024 砍砍@标准件厂长 版权所有"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "© 2024 砍砍@標準件廠長 版權所有"
+            "value" : "Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All rights reserved."
           }
         }
       }

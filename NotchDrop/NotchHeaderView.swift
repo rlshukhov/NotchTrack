@@ -3,6 +3,7 @@
 //  NotchDrop
 //
 //  Created by 秋星桥 on 2024/7/7.
+//  Edited by Lane Shukhov on 2024/10/21.
 //
 
 import ColorfulX
@@ -16,7 +17,7 @@ struct NotchHeaderView: View {
             Text(
                 vm.contentType == .settings
                     ? "Version: \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown") (Build: \(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"))"
-                    : "Notch Drop"
+                    : "Notch Track"
             )
             .contentTransition(.numericText())
             Spacer()

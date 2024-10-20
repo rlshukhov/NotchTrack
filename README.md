@@ -1,38 +1,35 @@
-# NotchDrop
+# NotchTrack
 
-Transform your MacBook's notch into a convenient file drop zone.
+An application that allows using the notch on MacBooks as a time tracker.
 
-[简体中文 🇨🇳](./Resources/i18n/zh-Hans/README.md)
+[Russian 🇷🇺](/Resources/i18n/ru/README.md)
 
-[![App Store Icon](./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/app/notchdrop/id6529528324)
+## 👀 Demonstration
 
-## 👀 Preview
-
-![Screenshot](./Resources/截屏2024-07-08%2003.14.34.png)
+![Screenshot](/Resources/demo.png)
 
 ## 🌟 Key Features
 
-- [x] Should work with your menu bar managers
-- [x] Drag and drop files to the notch
-- [x] Open AirDrop directly from the notch
-- [x] Automatically save files for 1 day, can be configured
-- [x] Open files with a simple click
-- [x] Delete files by holding the option key and clicking the x mark
-- [x] Fully open source and privacy-focused
-- [x] Free of charge if you do it yourself
+- [x] Compatible with other menu bar managers
+- [x] Collects your time logs into any specified folder (even with a git repository), splitting the logs by days.
+- [x] Logs are saved in YAML format. You can easily process them in the tool of your choice.
+- [x] Fully open source and privacy-oriented
+- [x] Completely free
 
 ## 🚀 Usage
 
-Download the latest version from [Releases](https://github.com/Lakr233/NotchDrop/releases).
+You can download the latest version on the [Releases](https://github.com/rlshukhov/NotchTrack/releases) page.
+
+Or build it yourself from source (only XCode is required)
 
 ## 🧑‍⚖️ License
 
-[MIT License](./LICENSE)
+[MIT License](/LICENSE)
 
-## 🥰 Acknowledgements
+## 🥰 Thanks
 
-Special thanks to [NotchNook](https://lo.cafe/notchnook) for providing the initial inspiration. This open-source project focuses more on my own needs, simplifies various configurations, and improves compatibility with the software I prefer.
+Thanks to the [NotchDrop](https://github.com/Lakr233/NotchDrop) project which was used as a base for this project.
 
 ---
 
-Copyright © 2024 Lakr Aream. All Rights Reserved.
+Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All Rights Reserved.

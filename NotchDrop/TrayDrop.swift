@@ -1,170 +1,147 @@
+//
+//  TrayDrop.swift
+//  NotchDrop
+//
+//  Edited by Lane Shukhov on 2024/10/21.
+//
+
 import Cocoa
 import Combine
 import Foundation
 import OrderedCollections
+import Yaml
 
 class TrayDrop: ObservableObject {
     static let shared = TrayDrop()
 
-    var cancellables = Set<AnyCancellable>()
+    @Published var currentEntry: TimeEntry?
+    @Published var entries: [TimeEntry] = []
 
-    @Persist(key: "keepInterval", defaultValue: 3600 * 24)
-    var keepInterval: TimeInterval
+    @Persist(key: "logDirectoryBookmark", defaultValue: Data())
+    private var logDirectoryBookmark: Data
+
+    @Published var logDirectory: String = ""
+
+    private var logDirectoryURL: URL? {
+        didSet {
+            logDirectory = logDirectoryURL?.path ?? ""
+        }
+    }
 
     private init() {
-        Publishers.CombineLatest3(
-            $selectedFileStorageTime.removeDuplicates(),
-            $customStorageTime.removeDuplicates(),
-            $customStorageTimeUnit.removeDuplicates()
-        )
-        .map { selectedFileStorageTime, customStorageTime, customStorageTimeUnit in
-            let customTime = switch customStorageTimeUnit {
-            case .hours:
-                TimeInterval(customStorageTime) * 60 * 60
-            case .days:
-                TimeInterval(customStorageTime) * 60 * 60 * 24
-            case .weeks:
-                TimeInterval(customStorageTime) * 60 * 60 * 24 * 7
-            case .months:
-                TimeInterval(customStorageTime) * 60 * 60 * 24 * 30
-            case .years:
-                TimeInterval(customStorageTime) * 60 * 60 * 24 * 365
-            }
-            let ans = selectedFileStorageTime.toTimeInterval(customTime: customTime)
-            print("[*] using interval \(ans) to keep files")
-            return ans
-        }
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] output in
-            self?.keepInterval = output
-        }
-        .store(in: &cancellables)
+        restoreLogDirectoryAccess()
     }
 
-    var isEmpty: Bool { items.isEmpty }
+    func startNewEntry() -> TimeEntry {
+        let newEntry = TimeEntry()
+        currentEntry = newEntry
+        return newEntry
+    }
 
-    @PublishedPersist(key: "TrayDropItems", defaultValue: .init())
-    var items: OrderedSet<DropItem>
+    func saveCurrentEntry() {
+        guard let entry = currentEntry else { return }
+        entries.append(entry)
+        saveEntriesToFile()
+        currentEntry = nil
+    }
 
-    @PublishedPersist(key: "selectedFileStorageTime", defaultValue: .oneDay)
-    var selectedFileStorageTime: FileStorageTime
-
-    @PublishedPersist(key: "customStorageTime", defaultValue: 1)
-    var customStorageTime: Int
-
-    @PublishedPersist(key: "customStorageTimeUnit", defaultValue: .days)
-    var customStorageTimeUnit: CustomstorageTimeUnit
-
-    @Published var isLoading: Int = 0
-
-    func load(_ providers: [NSItemProvider]) {
-        assert(!Thread.isMainThread)
-        DispatchQueue.main.asyncAndWait { isLoading += 1 }
-        guard let urls = providers.interfaceConvert() else {
-            DispatchQueue.main.asyncAndWait { isLoading -= 1 }
-            return
-        }
+    func saveEntriesToFile() {
+        guard let fileURL = getFileURL() else { return }
+        let yamlString = entriesToYamlString(entries)
         do {
-            let items = try urls.map { try DropItem(url: $0) }
-            DispatchQueue.main.async {
-                items.forEach { self.items.updateOrInsert($0, at: 0) }
-                self.isLoading -= 1
+            try yamlString.write(to: fileURL, atomically: true, encoding: .utf8)
+        } catch {
+            print("Error saving entries: \(error)")
+        }
+    }
+    
+    private func entriesToYamlString(_ entries: [TimeEntry]) -> String {
+        var yamlString = ""
+        for entry in entries {
+            yamlString += "- id: \(entry.id.uuidString)\n"
+            yamlString += "  startTime: \(ISO8601DateFormatter().string(from: entry.startTime))\n"
+            yamlString += "  description: \(entry.description)\n"
+        }
+        return yamlString
+    }
+    
+    func loadEntriesFromFile() {
+        guard let fileURL = getFileURL() else { return }
+        
+        do {
+            let yamlString = try String(contentsOf: fileURL, encoding: .utf8)
+            let yaml = try Yaml.load(yamlString)
+            entries = try yamlToEntries(yaml)
+        } catch {
+            print("Error loading entries: \(error)")
+        }
+    }
+    
+    private func yamlToEntries(_ yaml: Yaml) throws -> [TimeEntry] {
+        guard case .array(let arrayYaml) = yaml else {
+            throw NSError(domain: "YamlParsingError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Expected array at root"])
+        }
+        
+        return try arrayYaml.compactMap { entryYaml in
+            guard case .dictionary(let dict) = entryYaml,
+                  case .string(let idString)? = dict[.string("id")],
+                  case .string(let startTimeString)? = dict[.string("startTime")],
+                  case .string(let description)? = dict[.string("description")],
+                  let id = UUID(uuidString: idString),
+                  let startTime = ISO8601DateFormatter().date(from: startTimeString)
+            else {
+                print("Failed to parse entry: \(entryYaml)")
+                return nil
+            }
+            
+            return TimeEntry(id: id, startTime: startTime, description: description)
+        }
+    }
+
+    private func getFileURL() -> URL? {
+        guard let logDirectoryURL = logDirectoryURL else {
+            print("Log directory not set")
+            return nil
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let fileName = dateFormatter.string(from: Date()) + ".yaml"
+        return logDirectoryURL.appendingPathComponent(fileName)
+    }
+
+    func setLogDirectory(_ url: URL) {
+        do {
+            let bookmarkData = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+            logDirectoryBookmark = bookmarkData
+            logDirectoryURL = url
+            print("Log directory set to: \(url.path)")
+        } catch {
+            print("Failed to create bookmark for log directory: \(error)")
+        }
+    }
+
+    private func restoreLogDirectoryAccess() {
+        guard !logDirectoryBookmark.isEmpty else { return }
+
+        do {
+            var isStale = false
+            let url = try URL(resolvingBookmarkData: logDirectoryBookmark, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
+            
+            if isStale {
+                // Обновляем закладку, если она устарела
+                let newBookmarkData = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+                logDirectoryBookmark = newBookmarkData
+            }
+
+            if url.startAccessingSecurityScopedResource() {
+                logDirectoryURL = url
+                print("Restored access to log directory: \(url.path)")
+            } else {
+                print("Failed to access the bookmarked log directory")
             }
         } catch {
-            DispatchQueue.main.async {
-                self.isLoading -= 1
-                NSAlert.popError(error)
-            }
-        }
-    }
-
-    func cleanExpiredFiles() {
-        var inEdit = items
-        let shouldCleanItems = items.filter(\.shouldClean)
-        for item in shouldCleanItems {
-            inEdit.remove(item)
-        }
-        items = inEdit
-    }
-
-    func delete(_ item: DropItem.ID) {
-        guard let item = items.first(where: { $0.id == item }) else { return }
-        delete(item: item)
-    }
-
-    private func delete(item: DropItem) {
-        var inEdit = items
-
-        var url = item.storageURL
-        try? FileManager.default.removeItem(at: url)
-
-        do {
-            // loops up to the main directory
-            url = url.deletingLastPathComponent()
-            while url.lastPathComponent != DropItem.mainDir, url != documentsDirectory {
-                let contents = try FileManager.default.contentsOfDirectory(atPath: url.path)
-                guard contents.isEmpty else { break }
-                try FileManager.default.removeItem(at: url)
-                url = url.deletingLastPathComponent()
-            }
-        } catch {}
-
-        inEdit.remove(item)
-        items = inEdit
-    }
-
-    func removeAll() {
-        items.forEach { delete(item: $0) }
-    }
-}
-
-extension TrayDrop {
-    enum FileStorageTime: String, CaseIterable, Identifiable, Codable {
-        case oneHour = "1 Hour"
-        case oneDay = "1 Day"
-        case twoDays = "2 Days"
-        case threeDays = "3 Days"
-        case oneWeek = "1 Week"
-        case never = "Forever"
-        case custom = "Custom"
-
-        var id: String { rawValue }
-
-        var localized: String {
-            NSLocalizedString(rawValue, comment: "")
-        }
-
-        func toTimeInterval(customTime: TimeInterval) -> TimeInterval {
-            switch self {
-            case .oneHour:
-                60 * 60
-            case .oneDay:
-                60 * 60 * 24
-            case .twoDays:
-                60 * 60 * 24 * 2
-            case .threeDays:
-                60 * 60 * 24 * 3
-            case .oneWeek:
-                60 * 60 * 24 * 7
-            case .never:
-                TimeInterval.infinity
-            case .custom:
-                customTime
-            }
-        }
-    }
-
-    enum CustomstorageTimeUnit: String, CaseIterable, Identifiable, Codable {
-        case hours = "Hours"
-        case days = "Days"
-        case weeks = "Weeks"
-        case months = "Months"
-        case years = "Years"
-
-        var id: String { rawValue }
-
-        var localized: String {
-            NSLocalizedString(rawValue, comment: "")
+            print("Failed to resolve bookmark for log directory: \(error)")
         }
     }
 }

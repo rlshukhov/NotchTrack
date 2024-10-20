@@ -3,12 +3,12 @@
 //  NotchDrop
 //
 //  Created by 秋星桥 on 2024/7/7.
+//  Edited by Lane Shukhov on 2024/10/21.
 //
 
 import AppKit
 
-let productPage = URL(string: "https://github.com/Lakr233/NotchDrop")!
-let sponsorPage = URL(string: "https://github.com/sponsors/Lakr233")!
+let productPage = URL(string: "https://github.com/rlshukhov/NotchTrack")!
 
 let bundleIdentifier = Bundle.main.bundleIdentifier!
 let appVersion = "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))"
@@ -17,7 +17,7 @@ private let availableDirectories = FileManager
     .default
     .urls(for: .documentDirectory, in: .userDomainMask)
 let documentsDirectory = availableDirectories[0]
-    .appendingPathComponent("NotchDrop")
+    .appendingPathComponent("NotchTrack")
 let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
     .appendingPathComponent(bundleIdentifier)
 try? FileManager.default.removeItem(at: temporaryDirectory)
@@ -53,7 +53,6 @@ do {
 }
 
 _ = TrayDrop.shared
-TrayDrop.shared.cleanExpiredFiles()
 
 private let delegate = AppDelegate()
 NSApplication.shared.delegate = delegate
