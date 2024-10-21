@@ -32,4 +32,4 @@ Thanks to the [NotchDrop](https://github.com/Lakr233/NotchDrop) project which wa
 
 ---
 
-Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All Rights Reserved.
+Copyright © 2024 Lakr Aream, Lane Shukhov.

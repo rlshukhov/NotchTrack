@@ -8,6 +8,7 @@
 
 import LaunchAtLogin
 import SwiftUI
+import KeyboardShortcuts
 
 struct NotchSettingsView: View {
     @StateObject var vm: NotchViewModel
@@ -31,8 +32,6 @@ struct NotchSettingsView: View {
 
                 Spacer()
                 Toggle("Haptic Feedback ", isOn: $vm.hapticFeedback)
-
-                Spacer()
             }
 
             HStack {
@@ -50,11 +49,13 @@ struct NotchSettingsView: View {
                         }
                     }
                 }
-                
-                Spacer()
+            }
+            
+            Form {
+                KeyboardShortcuts.Recorder(NSLocalizedString("Open tracker window:", comment: ""), name: .toogleNotch)
             }
         }
-        .padding()
+        .padding(.horizontal)
         .transition(.scale(scale: 0.8).combined(with: .opacity))
     }
 }

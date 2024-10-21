@@ -45,14 +45,6 @@ extension NotchViewModel {
             }
             .store(in: &cancellables)
 
-        events.optionKeyPress
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] input in
-                guard let self else { return }
-                optionKeyPressed = input
-            }
-            .store(in: &cancellables)
-
         events.mouseLocation
             .receive(on: DispatchQueue.main)
             .sink { [weak self] mouseLocation in
@@ -110,6 +102,23 @@ extension NotchViewModel {
             .sink { [weak self] output in
                 self?.notchClose()
                 output.apply()
+            }
+            .store(in: &cancellables)
+        
+        events.enterDown
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                withAnimation {
+                    TrayDrop.shared.toggleTracking()
+                }
+                self?.notchClose()
+            }
+            .store(in: &cancellables)
+        
+        events.escapeDown
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.notchClose()
             }
             .store(in: &cancellables)
     }

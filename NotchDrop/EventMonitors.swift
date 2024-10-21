@@ -13,13 +13,13 @@ class EventMonitors {
 
     private var mouseMoveEvent: EventMonitor!
     private var mouseDownEvent: EventMonitor!
-    private var mouseDraggingFileEvent: EventMonitor!
-    private var optionKeyPressEvent: EventMonitor!
+    private var enterDownEvent: EventMonitor!
+    private var escapeDownEvent: EventMonitor!
 
     let mouseLocation: CurrentValueSubject<NSPoint, Never> = .init(.zero)
     let mouseDown: PassthroughSubject<Void, Never> = .init()
-    let mouseDraggingFile: PassthroughSubject<Void, Never> = .init()
-    let optionKeyPress: CurrentValueSubject<Bool, Never> = .init(false)
+    let enterDown: PassthroughSubject<Void, Never> = .init()
+    let escapeDown: PassthroughSubject<Void, Never> = .init()
 
     private init() {
         mouseMoveEvent = EventMonitor(mask: .mouseMoved) { [weak self] _ in
@@ -34,21 +34,21 @@ class EventMonitors {
             mouseDown.send()
         }
         mouseDownEvent.start()
-
-        mouseDraggingFileEvent = EventMonitor(mask: .leftMouseDragged) { [weak self] _ in
+        
+        enterDownEvent = EventMonitor(mask: .keyDown) { [weak self] event in
             guard let self else { return }
-            mouseDraggingFile.send()
-        }
-        mouseDraggingFileEvent.start()
-
-        optionKeyPressEvent = EventMonitor(mask: .flagsChanged) { [weak self] event in
-            guard let self else { return }
-            if event?.modifierFlags.contains(.option) == true {
-                optionKeyPress.send(true)
-            } else {
-                optionKeyPress.send(false)
+            if event?.specialKey == .carriageReturn || event?.specialKey == .enter {
+                enterDown.send()
             }
         }
-        optionKeyPressEvent.start()
+        enterDownEvent.start()
+        
+        escapeDownEvent = EventMonitor(mask: .keyDown) { [weak self] event in
+            guard let self else { return }
+            if event?.keyCode == 53 {
+                escapeDown.send()
+            }
+        }
+        escapeDownEvent.start()
     }
 }

@@ -3,6 +3,7 @@ import Combine
 import Foundation
 import LaunchAtLogin
 import SwiftUI
+import KeyboardShortcuts
 
 class NotchViewModel: NSObject, ObservableObject {
     var cancellables: Set<AnyCancellable> = []
@@ -12,6 +13,11 @@ class NotchViewModel: NSObject, ObservableObject {
         self.inset = inset
         super.init()
         setupCancellables()
+        
+        KeyboardShortcuts.onKeyUp(for: .toogleNotch) { [self] in
+            status == .closed ? notchOpen(.click) : notchClose()
+            NSApp.activate()
+        }
     }
 
     deinit {
@@ -34,7 +40,6 @@ class NotchViewModel: NSObject, ObservableObject {
 
     enum OpenReason: String, Codable, Hashable, Equatable {
         case click
-        case drag
         case boot
         case unknown
     }

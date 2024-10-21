@@ -9,33 +9,11 @@
 import ColorfulX
 import SwiftUI
 import UniformTypeIdentifiers
-
-struct BlurModifier: ViewModifier {
-    var radius: CGFloat
-
-    func body(content: Content) -> some View {
-        content.blur(radius: radius)
-    }
-}
-
-extension AnyTransition {
-    static var blur: AnyTransition {
-        AnyTransition.modifier(
-            active: BlurModifier(radius: 10),
-            identity: BlurModifier(radius: 0)
-        )
-    }
-}
+import Cocoa
 
 struct NotchContentView: View {
     @StateObject var vm: NotchViewModel
     @StateObject var tvm = TrayDrop.shared
-    
-    @State private var description: String = ""
-    @State private var isTracking: Bool = false
-    @State private var lastEntryId: UUID = UUID()
-    @State private var showLastEntry: Bool = false
-    @State private var displayTime: Date = Date()
     
     @FocusState private var isInputFocused: Bool
     
@@ -68,8 +46,8 @@ struct NotchContentView: View {
         .animation(vm.animation, value: vm.contentType)
         .onAppear {
             tvm.loadEntriesFromFile()
-            showLastEntry = tvm.entries.last != nil
-            displayTime = Date()
+            tvm.showLastEntry = tvm.entries.last != nil
+            tvm.displayTime = Date()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.isInputFocused = true
             }
@@ -80,24 +58,24 @@ struct NotchContentView: View {
         VStack(spacing: vm.spacing) {
             HStack(spacing: 10) {
                 CustomDatePicker(date: Binding(
-                    get: { displayTime },
+                    get: { tvm.displayTime },
                     set: { newDate in
-                        displayTime = newDate
+                        tvm.displayTime = newDate
                         if var entry = tvm.currentEntry {
                             entry.startTime = newDate
                             tvm.currentEntry = entry
                         }
                     }
                 ))
-                .disabled(isTracking)
+                .disabled(tvm.isTracking)
                 
-                CustomTextField(placeholder: NSLocalizedString("What are you doing?", comment: ""), text: $description, onCommit: startTracking)
+                CustomTextField(placeholder: NSLocalizedString("What are you doing?", comment: ""), text: $tvm.description)
                     .focused($isInputFocused)
-                    .disabled(isTracking)
+                    .disabled(tvm.isTracking)
                 
                 MainButton(
-                    color: isTracking ? ColorfulPreset.sunset.colors : ColorfulPreset.colorful.colors,
-                    image: Image(systemName: isTracking ? "pause.fill" : "play.fill"),
+                    color: tvm.isTracking ? ColorfulPreset.sunset.colors : ColorfulPreset.colorful.colors,
+                    image: Image(systemName: tvm.isTracking ? "pause.fill" : "play.fill"),
                     title: ""
                 )
                 .frame(width: 50, height: 50)
@@ -106,8 +84,8 @@ struct NotchContentView: View {
             .padding(.horizontal)
             
             if let lastEntry = tvm.entries.last {
-                LastEntryView(entry: lastEntry, show: $showLastEntry)
-                    .id(lastEntryId)
+                LastEntryView(entry: lastEntry, show: $tvm.showLastEntry)
+                    .id(tvm.lastEntryId)
                     .transition(.asymmetric(
                         insertion: .opacity.combined(with: .move(edge: .top).combined(with: .blur)),
                         removal: .opacity.combined(with: .move(edge: .bottom).combined(with: .blur))
@@ -116,30 +94,9 @@ struct NotchContentView: View {
         }
     }
     
-    private func startTracking() {
-        guard !isTracking else { return }
-        toggleTracking()
-    }
-    
     private func toggleTracking() {
         withAnimation(.easeInOut(duration: 0.7)) {
-            if isTracking {
-                tvm.saveCurrentEntry()
-                description = ""
-                isTracking = false
-                lastEntryId = tvm.entries.last?.id ?? UUID()
-                showLastEntry = true
-            } else {
-                if description == "" {
-                    return
-                }
-                
-                var newEntry = tvm.startNewEntry()
-                newEntry.description = description
-                newEntry.startTime = displayTime
-                tvm.currentEntry = newEntry
-                isTracking = true
-            }
+            tvm.toggleTracking()
         }
     }
 }
@@ -152,6 +109,11 @@ struct LastEntryView: View {
         HStack {
             Text(entry.startTime, style: .time)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
+            if let endTime = entry.endTime {
+                Text("-")
+                Text(endTime, style: .time)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+            }
             Text(entry.description)
                 .font(.system(size: 12, design: .rounded))
             Spacer()
@@ -212,11 +174,10 @@ struct CustomDatePicker: View {
 struct CustomTextField: View {
     let placeholder: String
     @Binding var text: String
-    var onCommit: () -> Void
     @FocusState private var isFocused: Bool
     
     var body: some View {
-        TextField(placeholder, text: $text, onCommit: onCommit)
+        TextField(placeholder, text: $text)
             .textFieldStyle(.plain)
             .font(.system(size: 18, design: .rounded))
             .padding(10)
@@ -259,6 +220,23 @@ struct MainButton: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .onHover { hover = $0 }
+    }
+}
+
+struct BlurModifier: ViewModifier {
+    var radius: CGFloat
+
+    func body(content: Content) -> some View {
+        content.blur(radius: radius)
+    }
+}
+
+extension AnyTransition {
+    static var blur: AnyTransition {
+        AnyTransition.modifier(
+            active: BlurModifier(radius: 10),
+            identity: BlurModifier(radius: 0)
+        )
     }
 }
 

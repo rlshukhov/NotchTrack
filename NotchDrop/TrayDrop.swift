@@ -16,13 +16,19 @@ class TrayDrop: ObservableObject {
 
     @Published var currentEntry: TimeEntry?
     @Published var entries: [TimeEntry] = []
+    
+    @Published var description: String = ""
+    @Published var isTracking: Bool = false
+    @Published var lastEntryId: UUID = UUID()
+    @Published var showLastEntry: Bool = false
+    @Published var displayTime: Date = Date()
 
     @Persist(key: "logDirectoryBookmark", defaultValue: Data())
     private var logDirectoryBookmark: Data
 
     @Published var logDirectory: String = ""
 
-    private var logDirectoryURL: URL? {
+    public var logDirectoryURL: URL? {
         didSet {
             logDirectory = logDirectoryURL?.path ?? ""
         }
@@ -32,26 +38,65 @@ class TrayDrop: ObservableObject {
         restoreLogDirectoryAccess()
     }
 
+    public func toggleTracking() {
+        if isTracking {
+            if saveCurrentEntry() {
+                description = ""
+                isTracking = false
+                lastEntryId = entries.last?.id ?? UUID()
+                showLastEntry = true
+            } else {
+                return
+            }
+        } else {
+            if description.isEmpty {
+                return
+            }
+            
+            if logDirectoryURL == nil {
+                NSAlert.popError(NSLocalizedString("Log directory is not set. Please set it in the settings before starting tracking.", comment: ""))
+                return
+            }
+            
+            var newEntry = startNewEntry()
+            newEntry.description = description
+            newEntry.startTime = displayTime
+            currentEntry = newEntry
+            isTracking = true
+        }
+    }
+    
     func startNewEntry() -> TimeEntry {
         let newEntry = TimeEntry()
         currentEntry = newEntry
         return newEntry
     }
 
-    func saveCurrentEntry() {
-        guard let entry = currentEntry else { return }
+    func saveCurrentEntry() -> Bool {
+        guard logDirectoryURL != nil else {
+            print("Log directory is not set. Please set it in the settings.")
+            return false
+        }
+        
+        guard var entry = currentEntry else { return false }
+        entry.endTime = Date()
         entries.append(entry)
         saveEntriesToFile()
         currentEntry = nil
+        return true
     }
 
     func saveEntriesToFile() {
-        guard let fileURL = getFileURL() else { return }
+        guard let fileURL = getFileURL() else {
+            print("Unable to get file URL. Please check your log directory settings.")
+            return
+        }
+        
         let yamlString = entriesToYamlString(entries)
         do {
             try yamlString.write(to: fileURL, atomically: true, encoding: .utf8)
         } catch {
-            print("Error saving entries: \(error)")
+            print("Error saving entries: " + error.localizedDescription)
         }
     }
     
@@ -60,6 +105,9 @@ class TrayDrop: ObservableObject {
         for entry in entries {
             yamlString += "- id: \(entry.id.uuidString)\n"
             yamlString += "  startTime: \(ISO8601DateFormatter().string(from: entry.startTime))\n"
+            if let endTime = entry.endTime {
+                yamlString += "  endTime: \(ISO8601DateFormatter().string(from: endTime))\n"
+            }
             yamlString += "  description: \(entry.description)\n"
         }
         return yamlString
@@ -94,7 +142,15 @@ class TrayDrop: ObservableObject {
                 return nil
             }
             
-            return TimeEntry(id: id, startTime: startTime, description: description)
+            let endTime: Date?
+            if case .string(let endTimeString)? = dict[.string("endTime")],
+               let parsedEndTime = ISO8601DateFormatter().date(from: endTimeString) {
+                endTime = parsedEndTime
+            } else {
+                endTime = nil
+            }
+            
+            return TimeEntry(id: id, startTime: startTime, endTime: endTime, description: description)
         }
     }
 

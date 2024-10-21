@@ -17,6 +17,28 @@
         }
       }
     },
+    "-" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-"
+          }
+        },
+        "ru-RU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-"
+          }
+        }
+      }
+    },
     "888888" : {
       "localizations" : {
         "en" : {
@@ -237,6 +259,28 @@
         }
       }
     },
+    "Log directory is not set. Please set it in the settings before starting tracking." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log directory is not set. Please set it in the settings before starting tracking."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не задана директория журнала. Пожалуйста, установите его в настройках перед началом отслеживания."
+          }
+        },
+        "ru-RU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не задана директория журнала. Пожалуйста, установите его в настройках перед началом отслеживания."
+          }
+        }
+      }
+    },
     "Logs folder: " : {
       "localizations" : {
         "en" : {
@@ -321,6 +365,51 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ОК"
+          }
+        }
+      }
+    },
+    "Open tracker window:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open tracker window:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть окно трекера:"
+          }
+        },
+        "ru-RU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открыть окно трекера:"
+          }
+        }
+      }
+    },
+    "Please enter a description before starting tracking." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter a description before starting tracking."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пожалуйста, введите описание перед началом отслеживания."
+          }
+        },
+        "ru-RU" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пожалуйста, введите описание перед началом отслеживания."
           }
         }
       }

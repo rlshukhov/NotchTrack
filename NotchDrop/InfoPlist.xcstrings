@@ -36,13 +36,13 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "NotchTrack"
           }
         },
         "ru-RU" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "NotchTrack"
           }
         }
@@ -55,19 +55,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All rights reserved."
+            "value" : "Copyright © 2024 Lakr Aream, Lane Shukhov."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All rights reserved."
+            "value" : "Copyright © 2024 Lakr Aream, Lane Shukhov."
           }
         },
         "ru-RU" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copyright © 2024 Lakr Aream. Copyright © 2024 Lane Shukhov. All rights reserved."
+            "value" : "Copyright © 2024 Lakr Aream, Lane Shukhov."
           }
         }
       }

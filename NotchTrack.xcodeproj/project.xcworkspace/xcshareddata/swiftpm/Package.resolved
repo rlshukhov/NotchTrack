@@ -1,13 +1,13 @@
 {
-  "originHash" : "bc8208a55c9ce0d811c5a6e20211d8d5188640dc0087ad327d98df5466a14879",
+  "originHash" : "99c6e6b6a0c2f6655c6937ea3608641b4bdac9d453684971292a17de4d0dd6cc",
   "pins" : [
     {
       "identity" : "colorfulx",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lakr233/ColorfulX",
       "state" : {
-        "revision" : "14c17d770232182377a6bda49f24fa34c253df73",
-        "version" : "5.2.0"
+        "revision" : "4425033690d83eea09c5e8a43a3d56b042b20bcb",
+        "version" : "5.3.1"
       }
     },
     {
@@ -20,12 +20,30 @@
       }
     },
     {
+      "identity" : "keyboardshortcuts",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/KeyboardShortcuts",
+      "state" : {
+        "revision" : "528cd5c4d51d85582397acbaa954ca709a74520e",
+        "version" : "2.2.0"
+      }
+    },
+    {
       "identity" : "launchatlogin-modern",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/LaunchAtLogin-Modern",
       "state" : {
-        "branch" : "main",
-        "revision" : "a04ec1c363be3627734f6dad757d82f5d4fa8fcc"
+        "revision" : "a04ec1c363be3627734f6dad757d82f5d4fa8fcc",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "msdisplaylink",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lakr233/MSDisplayLink.git",
+      "state" : {
+        "revision" : "89e224c797de6d2ec6552a568f62ef9ba016def0",
+        "version" : "1.1.0"
       }
     },
     {
@@ -51,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "3d2dc41a01f9e49d84f0a3925fb858bed64f702d",
-        "version" : "1.1.2"
+        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
+        "version" : "1.1.4"
       }
     },
     {
